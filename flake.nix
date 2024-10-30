@@ -25,8 +25,13 @@
           packages = with pkgs; [
             (fenix.packages.${system}.combine [
               fenix.packages.${system}.stable.toolchain
+              fenix.packages.${system}.stable.rust-src
             ])
           ];
+
+          shellHook = ''
+            export RUST_BACKTRACE="1"
+          '';
         };
       }
     );
