@@ -19,15 +19,23 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+
+        darwinBuildInputs = pkgs.lib.optionals pkgs.stdenv.isDarwin [
+          pkgs.libiconv
+          pkgs.darwin.apple_sdk.frameworks.Security
+        ];
       in
       {
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            (fenix.packages.${system}.combine [
-              fenix.packages.${system}.stable.toolchain
-              fenix.packages.${system}.stable.rust-src
-            ])
-          ];
+          packages =
+            with pkgs;
+            [
+              (fenix.packages.${system}.combine [
+                fenix.packages.${system}.stable.toolchain
+                fenix.packages.${system}.stable.rust-src
+              ])
+            ]
+            ++ darwinBuildInputs;
 
           shellHook = ''
             export RUST_BACKTRACE="1"
